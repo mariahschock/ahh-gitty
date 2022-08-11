@@ -23,6 +23,11 @@ describe('oauth routes', () => {
       iat: expect.any(Number),
       exp: expect.any(Number),
     });
+  })
+
+  it('DELETE - should log out a user', async () => {
+    const res = await request(app).delete('/api/v1/github/sessions');
+    expect(res.status).toBe(200);
   });
 
   afterAll(() => {
