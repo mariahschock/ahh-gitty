@@ -3,7 +3,9 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 
-describe('backend-express-template routes', () => {
+jest.mock('../lib/services/github');
+
+describe('oauth routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
@@ -16,6 +18,7 @@ describe('backend-express-template routes', () => {
     expect(res.body).toEqual({
       id: expect.any(String),
       username: 'git-this',
+      email: 'git-this@me.com',
       avatar: expect.any(String),
       iat: expect.any(Number),
       exp: expect.any(Number),
