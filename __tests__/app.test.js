@@ -2,7 +2,6 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-
 const agent = request.agent(app);
 
 jest.mock('../lib/services/github');
@@ -40,6 +39,19 @@ describe('oauth routes', () => {
       id: expect.any(String),
       posts: expect.any(String),
     }]));
+  });
+
+  it('POST - should create a new post', async () => {
+    const newPost = {
+      posts: 'Do'
+    };
+    await agent.get('/api/v1/github/callback?code=42');
+    const res = await agent.post('/api/v1/posts').send(newPost);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      ...newPost,
+    });
   });
 
   afterAll(() => {
