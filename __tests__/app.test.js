@@ -3,6 +3,8 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 
+const agent = request.agent(app);
+
 jest.mock('../lib/services/github');
 
 describe('oauth routes', () => {
@@ -23,11 +25,21 @@ describe('oauth routes', () => {
       iat: expect.any(Number),
       exp: expect.any(Number),
     });
-  })
+  });
 
   it('DELETE - should log out a user', async () => {
     const res = await request(app).delete('/api/v1/github/sessions');
     expect(res.status).toBe(200);
+  });
+
+  it('GET - authenticated users can view list of posts', async () => {
+    await agent
+      .get('/api/v1/github/callback?code=42');
+    const res = await agent.get('/api/v1/posts');
+    expect(res.body).toEqual(expect.arrayContaining([{
+      id: expect.any(String),
+      posts: expect.any(String),
+    }]));
   });
 
   afterAll(() => {
